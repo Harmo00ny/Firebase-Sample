@@ -1,23 +1,117 @@
 name: CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
+      - develop
+    paths-ignore:
+      - docs/**
+      - README.md
+      - LICENSE
+  pull_request:
+    branches:
+      - develop
+    paths-ignore:
+      - docs/**
+      - README.md
+      - LICENSE
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
     steps:
+    # チェックアウト
     - uses: actions/checkout@v2
 
-    - name: Run Gradle command
-      uses: Raul6469/android-gradle-action@2.0.0
+    # JDKのセットアップ
+    - name: set up JDK 1.8
+      uses: actions/setup-java@v1
       with:
-        # The gradle command you wish to run (required)
-        # Here, `./gradlew test` will be run
-        script: test
+        java-version: 1.8
 
-        # In some cases, you may need to provide
-        # Android licence agreement id
-        # You can find it on your own machine under `$ANDROID_HOME/license`,
-        # and add the file content as a GitHub secret named `$ANDROID_LICENCE`.
-        android-licence: ${{ secrets.ANDROID_LICENCE }}
+    # Gradleのキャッシュ復元
+    - uses: actions/cache@v2
+      with:
+        path: ~/.gradle/caches
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    # 依存関係の出力
+    - name: Displays the Android dependencies of the project
+      run: ./gradlew androidDependencies
+
+    # コンパイル
+    - name: Run Compile
+      run: ./gradlew assembleDebug
+
+    # テスト
+    - name: Test with Gradle
+      run: ./gradlew test --stacktrace
+
+    # コードカバレッジをJaCoCo形式で取得
+    - name: Get code coverage for JaCoCo
+      run: ./gradlew jacocoDebugTestReport
+
+    # コードカバレッジをCodecovへアップロード
+    - name: Upload code coverage to Codecov
+      run: bash <(curl -s https://codecov.io/bash)
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+    # テスト結果とコードカバレッジのアップロード
+    - name: Upload test results and code coverage Artifact
+      uses: actions/upload-artifact@v2
+      if: success() || failure()
+      with:
+        name: results
+        path: |
+          **/build/reports/tests/**/*
+          **/build/reports/test-results/**/*
+          **/build/reports/jacoco/**/*
+        if-no-files-found: warn
+        retention-days: 14
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    # チェックアウト
+    - uses: actions/checkout@v2
+
+    # 静的解析
+    - name: Run Inspection
+      run: ./gradlew lint
+
+    # アーティファクトへアップロード
+    - name: Upload results Artifact
+      uses: actions/upload-artifact@v2
+      if: success() || failure()
+      with:
+        name: results
+        path: |
+          **/build/reports/lint-results.html
+          **/build/reports/lint-results.xml
+        if-no-files-found: error
+        retention-days: 14
+
+  detekt:
+    runs-on: ubuntu-latest
+    steps:
+    # チェックアウト
+    - uses: actions/checkout@v2
+
+    # 静的解析
+    - name: Lint with detekt
+      run: ./gradlew detekt
+
+    # アーティファクトへアップロード
+    - name: Upload results Artifact
+      uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: results
+        path: |
+          **/build/reports/detekt/**/*
+        if-no-files-found: error
+        retention-days: 14
