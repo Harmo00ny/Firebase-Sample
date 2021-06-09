@@ -1,13 +1,17 @@
 package com.marysugar.firebase_sample
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import com.marysugar.firebase_sample.databinding.FragmentFirstBinding
 
 class FirstFragment : Fragment() {
@@ -39,8 +43,20 @@ class FirstFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        binding.button.setOnClickListener{
+        binding.btnEvent.setOnClickListener{
             sendEventData()
+        }
+
+        binding.btnSubscribe.setOnClickListener {
+            Firebase.messaging.subscribeToTopic("weather")
+                .addOnCompleteListener { task ->
+                    var msg = getString(R.string.msg_subscribed)
+                    if (!task.isSuccessful) {
+                        msg = getString(R.string.msg_subscribe_failed)
+                    }
+                    Log.d(TAG, msg)
+                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                }
         }
     }
 
