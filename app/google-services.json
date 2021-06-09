@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1063501774451",
+    "project_id": "fir-sample-4950b",
+    "storage_bucket": "fir-sample-4950b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1063501774451:android:ea280863c00aeedfa1f406",
+        "android_client_info": {
+          "package_name": "com.marysugar.firebase_sample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1063501774451-ehsprrr1bbor8go00u6ivjoqf51j55go.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDS34au0kfAK29T9lz98DFEmemt92r5WnY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1063501774451-ehsprrr1bbor8go00u6ivjoqf51j55go.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
