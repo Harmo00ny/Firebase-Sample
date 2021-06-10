@@ -4,6 +4,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="btn_test">Test</string>
     <string name="btn_subscribe">Subscribe</string>
+    <string name="btn_unsubscribe">UnSubscribe</string>
     <string name="msg_subscribed">Success</string>
     <string name="msg_subscribe_failed">Failed</string>
 </resources>

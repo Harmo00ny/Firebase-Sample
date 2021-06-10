@@ -58,6 +58,11 @@ class FirstFragment : Fragment() {
                     Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                 }
         }
+
+        binding.btnUnsubscribe.setOnClickListener {
+            Firebase.messaging.unsubscribeFromTopic("weather")
+            Toast.makeText(context, "Unsubscribed", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun sendEventData() {

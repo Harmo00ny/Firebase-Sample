@@ -4,9 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.google.firebase.analytics.FirebaseAnalytics
 
 
 class MainActivity : AppCompatActivity() {
@@ -14,6 +11,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        MyFirebaseInstanceIdService.Events.serviceEvent.observe(this,{
+            Log.d(TAG, it)
+        })
     }
 
     companion object {

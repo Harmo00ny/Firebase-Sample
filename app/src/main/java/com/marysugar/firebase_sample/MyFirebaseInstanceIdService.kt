@@ -1,6 +1,10 @@
 package com.marysugar.firebase_sample
 
+import android.content.Intent
+import android.os.Binder
+import android.os.IBinder
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -19,6 +23,12 @@ class MyFirebaseInstanceIdService : FirebaseMessagingService() {
     private fun sendRegistrationToServer(token: String?) {
         // TODO: Implement this method to send token to your app server.
         Log.d("TAG", "sendRegistrationTokenToServer($token)")
+    }
+
+    object Events {
+        val serviceEvent: MutableLiveData<String> by lazy {
+            MutableLiveData<String>()
+        }
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
@@ -44,6 +54,7 @@ class MyFirebaseInstanceIdService : FirebaseMessagingService() {
         // Check if message contains a notification payload.
         remoteMessage.notification?.let {
             Log.d(TAG, "Message Notification Body: ${it.body}")
+            Events.serviceEvent.postValue(it.body)
         }
 
         // Also if you intend on generating your own notifications as a result of a received FCM
